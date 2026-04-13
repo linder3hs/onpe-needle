@@ -4,9 +4,18 @@ export interface ONPECandidate {
   nombreAgrupacionPolitica: string;
   codigoAgrupacionPolitica: string;
   nombreCandidato: string;
+  dniCandidato: string;
   totalVotosValidos: number;
   porcentajeVotosValidos: number;
   porcentajeVotosEmitidos: number;
+}
+
+export function candidatePhotoUrl(dni: string): string {
+  return `https://resultadoelectoral.onpe.gob.pe/assets/img-reales/candidatos/${dni}.jpg`;
+}
+
+export function partyLogoUrl(codigo: string): string {
+  return `https://resultadoelectoral.onpe.gob.pe/assets/img-reales/partidos/${codigo.padStart(8, "0")}.jpg`;
 }
 
 export interface ONPETotals {
@@ -61,12 +70,13 @@ export async function fetchMesas(): Promise<ONPEMesas> {
 }
 
 export function shortName(fullName: string): string {
+  // Format from ONPE: "NOMBRE1 NOMBRE2 APELLIDO1 APELLIDO2"
   const parts = fullName.trim().split(" ");
   if (parts.length <= 2) return fullName;
-  // Last name + First name
-  const lastName = parts[0];
-  const firstName = parts[2] || parts[1];
-  return `${firstName} ${lastName}`;
+  const firstName = parts[0];
+  const lastName1 = parts[2] || parts[1];
+  const lastName2 = parts.length > 3 ? parts[3] : null;
+  return lastName2 ? `${firstName} ${lastName1} ${lastName2}` : `${firstName} ${lastName1}`;
 }
 
 export function formatNumber(n: number): string {

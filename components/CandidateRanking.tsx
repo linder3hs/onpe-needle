@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ONPECandidate, shortName } from "@/lib/onpe";
+import { ONPECandidate, shortName, candidatePhotoUrl, partyLogoUrl } from "@/lib/onpe";
 import { partyColor } from "@/lib/utils";
 
 interface CandidateRankingProps {
@@ -23,6 +23,8 @@ export default function CandidateRanking({ candidates, limit = 8 }: CandidateRan
         const barWidth = (pct / max) * 100;
         const color = partyColor(idx);
         const name = shortName(c.nombreCandidato);
+        const photoUrl = c.dniCandidato ? candidatePhotoUrl(c.dniCandidato) : null;
+        const logoUrl = partyLogoUrl(c.codigoAgrupacionPolitica);
 
         return (
           <motion.div
@@ -36,6 +38,37 @@ export default function CandidateRanking({ candidates, limit = 8 }: CandidateRan
             <span className="text-secondary font-mono text-xs w-5 text-right shrink-0">
               {idx + 1}
             </span>
+
+            {/* Candidate photo + party logo */}
+            <div className="relative shrink-0 w-9 h-9">
+              {/* Candidate photo */}
+              {photoUrl && (
+                <div
+                  className="w-9 h-9 rounded-full overflow-hidden border border-white/10"
+                  style={{ backgroundColor: color + "33" }}
+                >
+                  <img
+                    src={photoUrl}
+                    alt={name}
+                    className="w-full h-full object-cover object-top"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
+              {/* Party logo — small badge bottom-right */}
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full overflow-hidden border border-white/20 bg-black">
+                <img
+                  src={logoUrl}
+                  alt={c.nombreAgrupacionPolitica}
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                  }}
+                />
+              </div>
+            </div>
 
             {/* Bar + name */}
             <div className="flex-1 min-w-0">
