@@ -3,7 +3,19 @@
     "allow": [
       "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
       "Bash(mv /Users/linder3hs/dev/onpe-neddle/ONPE_NEEDLE_PROMPT.md /tmp/ONPE_NEEDLE_PROMPT.md)",
-      "Bash(npx create-next-app@latest /Users/linder3hs/dev/onpe-neddle --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)"
+      "Bash(npx create-next-app@latest /Users/linder3hs/dev/onpe-neddle --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(curl -v \"https://resultadoelectoral.onpe.gob.pe/presentacion-backend/resumen-general/totales?idEleccion=10&tipoFiltro=eleccion\")",
+      "Bash(curl:*)",
+      "Bash(python3 -c ':*)",
+      "Bash(grep -oE '\"https://[^\"]{10,}\"')",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['data'][:2] if 'data' in d else d, indent=2\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['data'], indent=2\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(c['nombreCandidato'], c['porcentajeVotosValidos']\\) for c in d['data'][:5]]\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['data']\\)\")"
     ]
   }
 }

@@ -1,65 +1,294 @@
-import Image from "next/image";
+"use client";
+
+import { useONPEResults } from "@/hooks/useONPEResults";
+import { useONPETotals } from "@/hooks/useONPETotals";
+import { useONPEMesas } from "@/hooks/useONPEMesas";
+import Needle from "@/components/Needle";
+import CandidateRanking from "@/components/CandidateRanking";
+import ProgressBar from "@/components/ProgressBar";
+import LiveStats from "@/components/LiveStats";
+import ShareButton from "@/components/ShareButton";
+import RefreshIndicator from "@/components/RefreshIndicator";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
+  const {
+    data: candidates,
+    isFetching: fetchingCandidates,
+    isError: errorCandidates,
+  } = useONPEResults();
+
+  const {
+    data: totals,
+    isFetching: fetchingTotals,
+    isError: errorTotals,
+  } = useONPETotals();
+
+  const { data: mesas } = useONPEMesas();
+
+  const isFetching = fetchingCandidates || fetchingTotals;
+  const hasError = errorCandidates || errorTotals;
+  const hasData = candidates && totals;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div
+      className="min-h-screen relative"
+      style={{ backgroundColor: "var(--bg-primary)" }}
+    >
+      {/* Watermark background text */}
+      {totals && (
+        <div
+          className="fixed inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden"
+          style={{ zIndex: 0 }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-dm-mono), monospace",
+              fontSize: "clamp(6rem, 25vw, 22rem)",
+              fontWeight: 900,
+              color: "rgba(255,255,255,0.025)",
+              letterSpacing: "-0.05em",
+              userSelect: "none",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            {totals.actasContabilizadas.toFixed(1)}%
+          </div>
+        </div>
+      )}
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Header */}
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            {/* Live dot */}
+            <div className="flex items-center gap-2">
+              <div
+                className="live-dot w-3 h-3 rounded-full"
+                style={{ backgroundColor: "var(--accent-red)" }}
+              />
+              <span
+                className="text-xs font-bold tracking-widest uppercase"
+                style={{
+                  color: "var(--accent-red)",
+                  fontFamily: "var(--font-dm-mono), monospace",
+                }}
+              >
+                EN VIVO
+              </span>
+            </div>
+
+            <div
+              style={{
+                width: 1,
+                height: 16,
+                backgroundColor: "var(--border)",
+              }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+            <div>
+              <h1
+                className="text-sm font-bold uppercase tracking-wider"
+                style={{ color: "var(--text-secondary)", fontFamily: "var(--font-dm-mono), monospace" }}
+              >
+                ONPE · Elecciones Generales Perú 2026
+              </h1>
+            </div>
+          </div>
+
+          <RefreshIndicator isFetching={isFetching} lastUpdated={totals?.fechaActualizacion} />
+        </header>
+
+        {/* Error banner */}
+        <AnimatePresence>
+          {hasError && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="card p-3 flex items-center gap-2 text-sm"
+              style={{ borderColor: "var(--accent-gold)", fontFamily: "var(--font-dm-mono), monospace" }}
+            >
+              <span style={{ color: "var(--accent-gold)" }}>⚠</span>
+              <span className="text-secondary">
+                Error conectando con ONPE. Mostrando últimos datos conocidos.
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Loading state */}
+        {!hasData && !hasError && (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
+              className="w-10 h-10 border-2 rounded-full"
+              style={{
+                borderColor: "var(--accent-red)",
+                borderTopColor: "transparent",
+              }}
+            />
+            <p
+              className="text-sm"
+              style={{
+                color: "var(--text-secondary)",
+                fontFamily: "var(--font-dm-mono), monospace",
+              }}
+            >
+              Conectando con ONPE...
+            </p>
+          </div>
+        )}
+
+        {hasData && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
           >
-            Documentation
-          </a>
-        </div>
-      </main>
+            {/* Progress bar — top of page, most important */}
+            <div className="card p-5">
+              <ProgressBar totals={totals} />
+            </div>
+
+            {/* Main grid: Needle + Rankings */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Needle */}
+              <div className="card p-5 flex flex-col items-center justify-center">
+                <Needle candidates={candidates} />
+              </div>
+
+              {/* Top candidates */}
+              <div className="card p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2
+                    className="text-xs font-bold uppercase tracking-widest"
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-dm-mono), monospace",
+                    }}
+                  >
+                    Resultados por candidato
+                  </h2>
+                  <span
+                    className="text-xs"
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-dm-mono), monospace",
+                    }}
+                  >
+                    % votos válidos
+                  </span>
+                </div>
+                <CandidateRanking candidates={candidates} limit={8} />
+              </div>
+            </div>
+
+            {/* Live stats */}
+            <div>
+              <h2
+                className="text-xs font-bold uppercase tracking-widest mb-3"
+                style={{
+                  color: "var(--text-secondary)",
+                  fontFamily: "var(--font-dm-mono), monospace",
+                }}
+              >
+                Estadísticas en tiempo real
+              </h2>
+              <LiveStats totals={totals} mesas={mesas} />
+            </div>
+
+            {/* Top 2 candidates spotlight */}
+            {candidates.length >= 2 && (
+              <div className="card p-5">
+                <h2
+                  className="text-xs font-bold uppercase tracking-widest mb-4"
+                  style={{
+                    color: "var(--text-secondary)",
+                    fontFamily: "var(--font-dm-mono), monospace",
+                  }}
+                >
+                  Candidatos a Segunda Vuelta
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {[...candidates]
+                    .sort((a, b) => b.porcentajeVotosValidos - a.porcentajeVotosValidos)
+                    .slice(0, 2)
+                    .map((c, idx) => (
+                      <motion.div
+                        key={c.codigoAgrupacionPolitica}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="card-elevated p-4 text-center space-y-2"
+                      >
+                        <div
+                          className="text-xs uppercase tracking-widest"
+                          style={{
+                            color: idx === 0 ? "var(--accent-gold)" : "var(--text-secondary)",
+                            fontFamily: "var(--font-dm-mono), monospace",
+                          }}
+                        >
+                          {idx === 0 ? "1° LUGAR" : "2° LUGAR"}
+                        </div>
+                        <div
+                          className="text-3xl font-black"
+                          style={{
+                            fontFamily: "var(--font-playfair), Playfair Display, serif",
+                            color: idx === 0 ? "var(--accent-gold)" : "var(--text-primary)",
+                          }}
+                        >
+                          {c.porcentajeVotosValidos.toFixed(2)}%
+                        </div>
+                        <div className="text-sm font-medium leading-tight">
+                          {c.nombreCandidato
+                            .split(" ")
+                            .slice(0, 3)
+                            .join(" ")}
+                        </div>
+                        <div
+                          className="text-xs"
+                          style={{
+                            color: "var(--text-secondary)",
+                            fontFamily: "var(--font-dm-mono), monospace",
+                          }}
+                        >
+                          {c.nombreAgrupacionPolitica}
+                        </div>
+                      </motion.div>
+                    ))}
+                </div>
+              </div>
+            )}
+
+            {/* Share */}
+            <div className="card p-5">
+              <h2
+                className="text-xs font-bold uppercase tracking-widest mb-3"
+                style={{
+                  color: "var(--text-secondary)",
+                  fontFamily: "var(--font-dm-mono), monospace",
+                }}
+              >
+                Compartir resultados
+              </h2>
+              <ShareButton totals={totals} candidates={candidates} />
+            </div>
+
+            {/* Footer */}
+            <footer
+              className="text-center text-xs pb-6"
+              style={{
+                color: "var(--text-secondary)",
+                fontFamily: "var(--font-dm-mono), monospace",
+              }}
+            >
+              Datos: ONPE API pública · Actualización automática cada 30s ·
+              No afiliado a la ONPE
+            </footer>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }
