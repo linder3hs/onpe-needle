@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, DM_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import JsonLd from "@/components/JsonLd";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -21,14 +22,41 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "700"],
 });
 
+const BASE_URL = "https://onpe-needle.linderhassinger.dev";
+
 export const metadata: Metadata = {
-  title: "ONPE Needle — Elecciones Generales Perú 2026",
+  metadataBase: new URL(BASE_URL),
+  title: "ONPE Needle — Elecciones Generales Perú 2026 EN VIVO",
   description:
-    "Dashboard en tiempo real de las Elecciones Generales Perú 2026. Resultados actualizados cada 30 segundos.",
+    "Resultados electorales en tiempo real. Elecciones Generales Perú 2026 con datos oficiales de la ONPE. Actualización automática cada 30 segundos.",
+  keywords: [
+    "elecciones Peru 2026",
+    "ONPE resultados",
+    "elecciones generales Peru",
+    "resultados electorales en vivo",
+    "segunda vuelta Peru",
+    "presidente Peru 2026",
+  ],
+  authors: [{ name: "linder3hs" }],
+  robots: { index: true, follow: true },
   openGraph: {
-    title: "ONPE Needle — Elecciones Perú 2026 EN VIVO",
-    description: "Resultados en tiempo real. Actualización automática cada 30s.",
+    title: "Elecciones Perú 2026 EN VIVO — Resultados en tiempo real",
+    description:
+      "Sigue los resultados oficiales de la ONPE en tiempo real. Datos actualizados cada 30 segundos.",
+    url: BASE_URL,
+    siteName: "ONPE Needle",
+    locale: "es_PE",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Elecciones Perú 2026 EN VIVO — Resultados en tiempo real",
+    description:
+      "Sigue los resultados oficiales de la ONPE en tiempo real. Datos actualizados cada 30 segundos.",
+    creator: "@linder3hs",
+  },
+  alternates: {
+    canonical: BASE_URL,
   },
 };
 
@@ -51,6 +79,7 @@ export default function RootLayout({
           fontFamily: "var(--font-dm-sans), DM Sans, sans-serif",
         }}
       >
+        <JsonLd />
         <Providers>{children}</Providers>
         <script
           defer
