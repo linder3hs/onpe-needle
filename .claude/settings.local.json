@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(mv /Users/linder3hs/dev/onpe-neddle/ONPE_NEEDLE_PROMPT.md /tmp/ONPE_NEEDLE_PROMPT.md)",
+      "Bash(npx create-next-app@latest /Users/linder3hs/dev/onpe-neddle --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)"
+    ]
+  }
+}
