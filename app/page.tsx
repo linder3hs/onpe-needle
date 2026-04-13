@@ -10,6 +10,7 @@ import LiveStats from "@/components/LiveStats";
 import ShareButton from "@/components/ShareButton";
 import RefreshIndicator from "@/components/RefreshIndicator";
 import { motion, AnimatePresence } from "framer-motion";
+import { shortName, candidatePhotoUrl, partyLogoUrl } from "@/lib/onpe";
 
 export default function Home() {
   const {
@@ -220,8 +221,9 @@ export default function Home() {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="card-elevated p-4 text-center space-y-2"
+                        className="card-elevated p-4 text-center space-y-3"
                       >
+                        {/* Rank label */}
                         <div
                           className="text-xs uppercase tracking-widest"
                           style={{
@@ -231,6 +233,44 @@ export default function Home() {
                         >
                           {idx === 0 ? "1° LUGAR" : "2° LUGAR"}
                         </div>
+
+                        {/* Photos */}
+                        <div className="flex items-center justify-center">
+                          <div className="relative">
+                            {/* Candidate photo */}
+                            <div
+                              className="w-16 h-16 rounded-full overflow-hidden border-2 mx-auto"
+                              style={{
+                                borderColor: idx === 0 ? "var(--accent-gold)" : "var(--border)",
+                                backgroundColor: "var(--bg-elevated)",
+                              }}
+                            >
+                              {c.dniCandidato && (
+                                <img
+                                  src={candidatePhotoUrl(c.dniCandidato)}
+                                  alt={shortName(c.nombreCandidato)}
+                                  className="w-full h-full object-cover object-top"
+                                  onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                                  }}
+                                />
+                              )}
+                            </div>
+                            {/* Party logo badge */}
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full overflow-hidden border-2 border-black bg-black">
+                              <img
+                                src={partyLogoUrl(c.codigoAgrupacionPolitica)}
+                                alt={c.nombreAgrupacionPolitica}
+                                className="w-full h-full object-contain"
+                                onError={(e) => {
+                                  (e.currentTarget.parentElement as HTMLElement).style.display = "none";
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Percentage */}
                         <div
                           className="text-3xl font-black"
                           style={{
@@ -240,12 +280,13 @@ export default function Home() {
                         >
                           {c.porcentajeVotosValidos.toFixed(2)}%
                         </div>
+
+                        {/* Name */}
                         <div className="text-sm font-medium leading-tight">
-                          {c.nombreCandidato
-                            .split(" ")
-                            .slice(0, 3)
-                            .join(" ")}
+                          {shortName(c.nombreCandidato)}
                         </div>
+
+                        {/* Party */}
                         <div
                           className="text-xs"
                           style={{
