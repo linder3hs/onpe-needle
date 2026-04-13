@@ -151,14 +151,9 @@ export default function Home() {
               <ProgressBar totals={totals} />
             </div>
 
-            {/* Main grid: Needle + Rankings */}
+            {/* Candidates + Needle: stacked on mobile, side-by-side on desktop */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Needle */}
-              <div className="card p-5 flex flex-col items-center justify-center">
-                <Needle candidates={candidates} />
-              </div>
-
-              {/* Top candidates */}
+              {/* Top candidates — left on desktop, first on mobile */}
               <div className="card p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2
@@ -181,6 +176,11 @@ export default function Home() {
                   </span>
                 </div>
                 <CandidateRanking candidates={candidates} limit={8} />
+              </div>
+
+              {/* Needle — right on desktop, below on mobile */}
+              <div className="card p-5 flex flex-col items-center justify-center">
+                <Needle candidates={candidates} />
               </div>
             </div>
 
