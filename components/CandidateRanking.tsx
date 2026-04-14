@@ -26,9 +26,22 @@ export default function CandidateRanking({ candidates, limit = 8 }: CandidateRan
         const photoUrl = c.dniCandidato ? candidatePhotoUrl(c.dniCandidato) : null;
         const logoUrl = partyLogoUrl(c.codigoAgrupacionPolitica);
 
+        const prevPct = idx > 0 ? sorted[idx - 1].porcentajeVotosValidos : null;
+        const gap = prevPct !== null ? (prevPct - pct).toFixed(2) : null;
+
         return (
+          <div key={c.codigoAgrupacionPolitica}>
+            {gap !== null && (
+              <div className="flex justify-end">
+                <span
+                  className="font-mono text-[10px] font-bold"
+                  style={{ color }}
+                >
+                  ~ {gap}
+                </span>
+              </div>
+            )}
           <motion.div
-            key={c.codigoAgrupacionPolitica}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: idx * 0.06, type: "spring", stiffness: 200, damping: 25 }}
@@ -97,6 +110,7 @@ export default function CandidateRanking({ candidates, limit = 8 }: CandidateRan
               </div>
             </div>
           </motion.div>
+          </div>
         );
       })}
     </div>

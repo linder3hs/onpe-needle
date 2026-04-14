@@ -24,19 +24,6 @@ export default function ProgressBar({ totals }: ProgressBarProps) {
     <div className="space-y-3">
       {/* Big percentage watermark */}
       <div className="relative">
-        <div
-          className="text-[5rem] sm:text-[7rem] font-mono font-black leading-none select-none pointer-events-none"
-          style={{
-            color: "rgba(255,255,255,0.04)",
-            position: "absolute",
-            right: 0,
-            top: "50%",
-            transform: "translateY(-50%)",
-            zIndex: 0,
-          }}
-        >
-          {pct.toFixed(1)}%
-        </div>
 
         <div className="relative z-10 space-y-2">
           <div className="flex items-baseline gap-3">
@@ -51,7 +38,7 @@ export default function ProgressBar({ totals }: ProgressBarProps) {
             <motion.div
               className="h-full rounded-full"
               style={{
-                background: "linear-gradient(90deg, #e63946, #ffd60a, #2dc653)",
+                background: "linear-gradient(90deg, #e63946, #ffd60a, #2dc653, #4cc9f0)",
               }}
               initial={{ width: 0 }}
               animate={{ width: `${Math.max(pct, 0.5)}%` }}

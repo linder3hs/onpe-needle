@@ -3,8 +3,8 @@
 import { useONPEResults } from "@/hooks/useONPEResults";
 import { useONPETotals } from "@/hooks/useONPETotals";
 import { useONPEMesas } from "@/hooks/useONPEMesas";
-import Needle from "@/components/Needle";
 import CandidateRanking from "@/components/CandidateRanking";
+import CandidateVotesGrid from "@/components/CandidateVotesGrid";
 import ProgressBar from "@/components/ProgressBar";
 import LiveStats from "@/components/LiveStats";
 import ShareButton from "@/components/ShareButton";
@@ -179,9 +179,29 @@ export default function Home() {
                 <CandidateRanking candidates={candidates} limit={8} />
               </div>
 
-              {/* Needle — right on desktop, below on mobile */}
-              <div className="card p-5 flex flex-col items-center justify-center">
-                <Needle candidates={candidates} />
+              {/* Top 4 votos absolutos — right on desktop, below on mobile */}
+              <div className="card p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2
+                    className="text-xs font-bold uppercase tracking-widest"
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-dm-mono), monospace",
+                    }}
+                  >
+                    Top 6 en votos
+                  </h2>
+                  <span
+                    className="text-xs"
+                    style={{
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-dm-mono), monospace",
+                    }}
+                  >
+                    votos válidos
+                  </span>
+                </div>
+                <CandidateVotesGrid candidates={candidates} />
               </div>
             </div>
 
