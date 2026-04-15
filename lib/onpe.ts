@@ -70,13 +70,9 @@ export async function fetchMesas(): Promise<ONPEMesas> {
 }
 
 export function shortName(fullName: string): string {
-  // Format from ONPE: "NOMBRE1 NOMBRE2 APELLIDO1 APELLIDO2"
   const parts = fullName.trim().split(" ");
-  if (parts.length <= 2) return fullName;
-  const firstName = parts[0];
-  const lastName1 = parts[2] || parts[1];
-  const lastName2 = parts.length > 3 ? parts[3] : null;
-  return lastName2 ? `${firstName} ${lastName1} ${lastName2}` : `${firstName} ${lastName1}`;
+  if (parts.length >= 4) return `${parts[0]} ${parts[2]} ${parts[3]}`;
+  return fullName;
 }
 
 export function formatNumber(n: number): string {
